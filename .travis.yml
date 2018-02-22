@@ -2,3 +2,10 @@ language: node_js
 node_js: node
 services:
 - mongodb
+deploy:
+  provider: heroku
+  api_key:
+    secure: tqy4kKbssU41GHfvyAgPl+Ee5b/GY7dEzt77kYfCzqKw41Pf3RvFzWrSTJoN19tkcqX0v00m87M1aEGLI3vAeyFED2/93l7RgdRNY+EngsLcDziRvk/rWhMvartvyfsSsQQvjsBSyhUHaTX2lPrWjbv/BmV0DZBvgXWCAzi0Cv0gNEOdTOv/Ji6N0ueCPEz8d2ff0Nt8GOMdHljUmDxu78IwlKFRZXHfAypCY2lmMSjaGefekfC4VvLjsuDipeJYcZHzsNANxrcRlXiGIYwTplDfZ6vLoYLugFbL16fnwMP33lsT6U/lBWvGxT9+4HrANuP/nTcsnD2XOVl1PKSysQPMJK6HTZK6D9VTCi9F3q2sZB8KPWoxhnshpPYKFJIJnpbIpUA2/IsoNcqKEo6EL1apW7CbVK4dGS8p3Beu9NCiDnmGF7Pw17Z3dm7t9hXIYqxoCUTg9IFTcn8UH8Z1TMOZrBw0fodTpXQaE5aWRNPofQGBiaZjP1fRC++KKPN0Ffjulp8ZhLc2T5L/xLZH47Pc3gEBQW/ISYpRVP5xW6UWGCr+AvXP+wIQxaxvGQnd2O67IN3xWvCASSoRDZEMXlEEpvSvipC1m3pkLelo4+RNYns1YlyINgVFH1wRwLK7W4Yb948VekbhRVeg/t3i4VryoPGOfKBRm3bslWda4m8=
+  app: aqueous-escarpment-36658
+  on:
+    repo: djiani/myfavoritemeal_api
