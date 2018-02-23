@@ -16,7 +16,7 @@ const MealSchema = mongoose.Schema({
     
 });
 
-UserSchema.methods.apiRepr = function() {
+MealSchema.methods.apiRepr = function() {
     return {
         name: this.name || '',
         description: this.description || '',
@@ -31,6 +31,6 @@ UserSchema.methods.apiRepr = function() {
 };
 
 
-const Meals = mongoose.model('Meals', UserSchema);
+const Meals = mongoose.model('Meals', MealSchema);
 
 module.exports = {Meals};
