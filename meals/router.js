@@ -8,6 +8,18 @@ const router = express.Router();
 
 const jsonParser = bodyParser.json();
 
+
+/************************************************
+/*************** Get all meal *******************
+/************************************************/
+router.get('/', (req, res) => {
+    console.log('check required field');
+    return Meals.find()
+        .then(Meals => res.json(Meals.map(meal => meal.apiRepr())))
+        .catch(err => res.status(500).json({message: 'Internal server error'}));
+});
+
+
 // Post to register a new meal
 router.post('/', jsonParser, (req, res) => {
     const requiredFields = ['name', 'category', 'hands_on', 'served', 'owner'];
@@ -36,40 +48,42 @@ router.post('/', jsonParser, (req, res) => {
         });
     }
 
-    const numberFields = ['hands_on', 'served'];
-    const nonNumberField = numberFields.find(
-        field => field in req.body && typeof req.body[field] !== 'Number'
-    );
+    // const numberFields = ['hands_on', 'served'];
+    // const nonNumberField = numberFields.find(
+    //     field => field in req.body && typeof req.body[field] !== 'Number'
+    // );
 
-    if (nonNumberField) {
-        return res.status(422).json({
-            code: 422,
-            reason: 'ValidationError',
-            message: 'Incorrect field type: expected Number',
-            location: nonNumberField
-        });
-    }
+    // if (nonNumberField) {
+    //     return res.status(422).json({
+    //         code: 422,
+    //         reason: 'ValidationError',
+    //         message: 'Incorrect field type: expected Number',
+    //         location: nonNumberField
+    //     });
+    // }
     
-
+    console.log(req.body);
 
     return Meals.create({
-        name,
-        description,
-        category,
-        hands_on,
-        served,
-        ingredients, 
-        direction,
-        owne,
-        image_url
+        name: req.body.name,
+        description: req.body.description,
+        category: req.body.category,
+        difficulty: req.body.difficulty,
+        hands_on: req.body.hands_on,
+        served: req.body.served,
+        ingredients: req.body.ingredients.map( (ingred, index)=>(ingred.name)), 
+        directions: req.body.directions.map( (direct, index) =>(direct.name)),
+        owner: req.body.owner,
+        image_url: req.body.image_url
     })
     .then(meal => {
-        return res.status(201).json(meal.apr());
+        return res.status(201).json(meal.apiRepr());
     })
     .catch(err=>{
         if (err.reason === 'ValidationError') {
             return res.status(err.code).json(err);
         }
+        console.log(err);
         res.status(500).json({code: 500, message: 'Internal server error'});
     })
     
@@ -78,21 +92,12 @@ router.post('/', jsonParser, (req, res) => {
 
 
 
-/************************************************
-/*************** Get all meal *******************
-/************************************************/
-router.get('/', (req, res) => {
-    console.log('check required field');
-    return Meals.find()
-        .then(Meals => res.json(Meals.map(meal => meal.apiRepr())))
-        .catch(err => res.status(500).json({message: 'Internal server error'}));
-});
 
 
 
 /************************************************
-/*************** Update meal *******************
-/************************************************/
+************** Update meal *******************
+/***********************************************/
 router.put('/:id', jsonParser, (req, res)=>{
   console.log('check required field');
   console.log(req.body);
@@ -138,7 +143,7 @@ router.put('/:id', jsonParser, (req, res)=>{
 
 /************************************************
 /*************** delete meal *******************
-/************************************************/
+/***********************************************/
 
 router.delete('/:id', (req, res) => {
   console.log('About to remove this meal: '+req.params.id+ 'from the database!!!!')

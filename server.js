@@ -17,6 +17,7 @@ const {router: usersRouter} = require('./users');
 const {router: mealRouter} = require('./meals');
 const {router: authRouter, basicStrategy, jwtStrategy} = require('./auth');
 
+
 mongoose.Promise = global.Promise;
 
 const {PORT, DATABASE_URL} = require('./config');
@@ -41,7 +42,7 @@ app.use(morgan('common'));
 const {CLIENT_ORIGIN} = require('./config');
 app.use(
     cors({
-        origin: CLIENT_ORIGIN
+        origin: [CLIENT_ORIGIN]
     })
 );
 

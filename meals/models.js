@@ -7,6 +7,7 @@ const MealSchema = mongoose.Schema({
     name: {type:String, required:true},
     description: String,
     category: {type:String, required:true},
+    difficulty: String,
     hands_on: {type: Number, required:true},
     served: {type: Number, required:true},
     ingredients: [String], 
