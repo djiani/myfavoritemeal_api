@@ -5,41 +5,29 @@ const mongoose = require('mongoose');
 const morgan = require('morgan');
 const passport = require('passport');
 const cors = require('cors');
+const uuid = require('uuid');
+const aws = require('aws-sdk');
+const multer = require('multer');
+const multerS3 = require('multer-s3');
 
-// Here we use destructuring assignment with renaming so the two variables
-// called router (from ./users and ./auth) have different names
-// For example:
-// const actorSurnames = { james: "Stewart", robert: "De Niro" };
-// const { james: jimmy, robert: bobby } = actorSurnames;
-// console.log(jimmy); // Stewart - the variable name is jimmy, not james
-// console.log(bobby); // De Niro - the variable name is bobby, not robert
+
+const {PORT, DATABASE_URL, CLIENT_ORIGIN, ACCESS_KEY_ID, 
+    SECRET_ACCESS_KEY, S3_BUCKET, JWT_SECRET, JWT_EXPIRY} = require('./config');
+
+
 const {router: usersRouter} = require('./users');
 const {router: mealRouter} = require('./meals');
-const {router: authRouter, basicStrategy, jwtStrategy} = require('./auth');
-
+const {router: authRouter, localStrategy, jwtStrategy} = require('./auth');
 
 mongoose.Promise = global.Promise;
 
-const {PORT, DATABASE_URL} = require('./config');
-
 const app = express();
+
 
 // Logging
 app.use(morgan('common'));
+app.use(bodyParser.json());
 
-// CORS
-/*app.use(function(req, res, next) {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Headers', 'Content-Type,Authorization');
-    res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE');
-    if (req.method === 'OPTIONS') {
-        return res.send(204);
-    }
-    next();
-});
-*/
-
-const {CLIENT_ORIGIN} = require('./config');
 app.use(
     cors({
         origin: [CLIENT_ORIGIN]
@@ -47,7 +35,7 @@ app.use(
 );
 
 app.use(passport.initialize());
-passport.use(basicStrategy);
+passport.use(localStrategy);
 passport.use(jwtStrategy);
 
 app.use('/api/meals/', mealRouter);
@@ -65,6 +53,77 @@ app.get(
         });
     }
 );
+
+aws.config.update(
+    {accessKeyId: ACCESS_KEY_ID, 
+    secretAccessKey: SECRET_ACCESS_KEY,
+    region: "us-west-2"
+})
+const s3 = new aws.S3();
+// create the multer object, defining a filter for file extension and storage rules
+const upload = multer({
+  // verify file extension (this doesn't protect against fake extensions!)
+  fileFilter: (req, file, cb) => {
+    if (!/^image\/(jpe?g|png|gif)$/i.test(file.mimetype)) {
+      return cb(new Error('File type not supported!'), false);
+    }
+    cb(null, true);
+  },
+  // define storage rules using multerS3
+  storage: multerS3({
+    s3,
+    bucket: S3_BUCKET,
+    contentType: multerS3.AUTO_CONTENT_TYPE,
+    acl: 'public-read',
+    metadata: (req, file, cb) => {
+      cb(null, {fieldName: file.fieldname});
+    },
+    key: (req, file, cb) => {
+      const extension = file.mimetype.split('/').pop();
+      cb(null, `products/${Date.now().toString()}.${extension}`);
+    }
+  })
+}).single('file');
+
+app.post('/api/test-upload', (request, response) => {
+  upload(request, response, error => {
+    if (error) {
+      return response.status(400).send(error);
+    }
+    return response.status(200).send(request.file);
+  });
+});
+
+
+// app.post('/api/upload/:filename', (req, res) => {
+  
+//   let url;
+//   const s3 = new aws.S3();
+//   console.log(req.params)
+//   const fileName = req.body.filename;
+//   const filepath = req.body.filepath
+//   const s3Params = {
+//     Bucket: 'awsmyfavoritemeal',
+//     Key: filename,
+//     Body: fs.createReadStream(filepath),
+//     ContentType: 'image/*',
+//     ACL: 'public-read'
+//   };
+
+//   s3.putObject(s3Params, (err, data) => {
+//     if(err){
+//       console.log(err);
+//       return res.json({message: err});
+//     }
+//     const returnData = {
+//       signedRequest: data,
+//       url: `https://${S3_BUCKET}.s3.amazonaws.com/${req.params.filename}`
+//     };
+//     res.send(JSON.stringify(returnData));
+//   })
+
+// });
+
 
 app.use('*', (req, res) => {
     return res.status(404).json({message: 'Not Found'});

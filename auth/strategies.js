@@ -1,5 +1,6 @@
+require('dotenv').config();
 const passport = require('passport');
-const {BasicStrategy} = require('passport-http');
+const {Strategy: LocalStrategy} = require('passport-local');
 const {
     // Assigns the Strategy export to the name JwtStrategy using object
     // destructuring
@@ -10,18 +11,21 @@ const {
 
 const {User} = require('../users/models');
 const {JWT_SECRET} = require('../config');
+//console.log(process.env);
 
-const basicStrategy = new BasicStrategy((username, password, callback) => {
+const localStrategy = new LocalStrategy((username, password, callback) => {
     let user;
     User.findOne({username: username})
         .then(_user => {
+            console.log('check for username');
+            console.log(_user);
             user = _user;
             if (!user) {
                 // Return a rejected promise so we break out of the chain of .thens.
                 // Any errors like this will be handled in the catch block.
                 return Promise.reject({
                     reason: 'LoginError',
-                    message: 'Incorrect username or password'
+                    message: 'Incorrect username'
                 });
             }
             return user.validatePassword(password);
@@ -30,7 +34,7 @@ const basicStrategy = new BasicStrategy((username, password, callback) => {
             if (!isValid) {
                 return Promise.reject({
                     reason: 'LoginError',
-                    message: 'Incorrect username or password'
+                    message: 'Incorrect password'
                 });
             }
             return callback(null, user);
@@ -56,4 +60,4 @@ const jwtStrategy = new JwtStrategy(
     }
 );
 
-module.exports = {basicStrategy, jwtStrategy};
+module.exports = {localStrategy, jwtStrategy};

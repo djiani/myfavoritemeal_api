@@ -12,21 +12,27 @@ const MealSchema = mongoose.Schema({
     served: {type: Number, required:true},
     ingredients: [String], 
     directions: [String],
-    owner: {type: String, required: true},
+    owner: { 
+        name: String,
+        username: String
+    },
     image_url: String
     
 });
 
 MealSchema.methods.apiRepr = function() {
     return {
+        id: this._id,
         name: this.name || '',
         description: this.description || '',
         category: this.category || '',
         hands_on: this.hands_on || 0,
         served: this.served || 0,
+        difficulty: this.difficulty || '',
         ingredients: this.ingredients || [],
         directions: this.directions || [],
-        owner: this.directions || '',
+        owner: this.owner.name || '',
+        username: this.owner.username || '',
         image_url: this.image_url || ''
     };
 };
