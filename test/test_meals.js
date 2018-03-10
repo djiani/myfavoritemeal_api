@@ -99,8 +99,6 @@ describe('myfavorite meal api', function(){
         return chai.request(app)
         .get('/api/meals/meal/'+id)
         .then(res =>{
-          console.log('check id...')
-          console.log(res.body);
           expect(res).to.have.status(200);
           expect(res.body).to.be.an('object');
           expect(res.body.meal._id).to.equal(id);
@@ -178,8 +176,6 @@ describe('myfavorite meal api', function(){
       .get('/api/meals')
       .then(res =>{
         updateMeal.id = res.body[0].id;
-        console.log('check  updateMeal...')
-        console.log(updateMeal);
         return chai.request(app)
         .put('/api/meals/'+ res.body[0].id)
         .send(updateMeal)

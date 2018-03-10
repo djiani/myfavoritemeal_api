@@ -14,8 +14,6 @@ const multerS3 = require('multer-s3');
 const {PORT, DATABASE_URL, CLIENT_ORIGIN, ACCESS_KEY_ID, 
     SECRET_ACCESS_KEY, S3_BUCKET, JWT_SECRET, JWT_EXPIRY} = require('./config');
 
-console.log('checdk JWT_EXPIRY:')
-console.log(JWT_EXPIRY);
 
 const {router: usersRouter} = require('./users');
 const {router: mealRouter} = require('./meals');

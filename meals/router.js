@@ -91,7 +91,7 @@ router.post('/', jsonParser, (req, res) => {
     //     });
     // }
     
-    console.log(req.body);
+    //console.log(req.body);
 
     return Meals.create({
         name: req.body.name,
@@ -128,8 +128,6 @@ router.post('/', jsonParser, (req, res) => {
 ************** Update meal *******************
 /***********************************************/
 router.put('/:id', jsonParser, (req, res)=>{
-  console.log('check required field');
-  console.log(req.body);
   const requiredFields = ['category', 'hands_on', 'served', 'owner'];
   const missingField = requiredFields.find(field => !(field in req.body));
     if (missingField) {
@@ -147,7 +145,7 @@ router.put('/:id', jsonParser, (req, res)=>{
       return res.status(400).send(message);
 
     }
-    console.log('Update meal...');
+    
     const mealUpdate = {
           'id': req.body.id,
           'name': req.body.name,
