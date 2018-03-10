@@ -34,6 +34,12 @@ app.use(
     })
 );
 
+//initial endpoint at the base of the app to log the index.html file
+app.get('/', (req, res) => {
+  console.log('test running app');
+  res.sendFile(__dirname + '/views/index.html');
+});
+
 app.use(passport.initialize());
 passport.use(localStrategy);
 passport.use(jwtStrategy);
