@@ -379,6 +379,7 @@ describe('/api/user', function() {
                         expect(res).to.have.status(201);
                         expect(res.body).to.be.an('object');
                         expect(res.body).to.have.keys(
+                            'id',
                             'username',
                             'firstName',
                             'lastName'
@@ -414,6 +415,7 @@ describe('/api/user', function() {
                         expect(res).to.have.status(201);
                         expect(res.body).to.be.an('object');
                         expect(res.body).to.have.keys(
+                            'id',
                             'username',
                             'firstName',
                             'lastName'
@@ -461,16 +463,6 @@ describe('/api/user', function() {
                         expect(res).to.have.status(200);
                         expect(res.body).to.be.an('array');
                         expect(res.body).to.have.length(2);
-                        expect(res.body[0]).to.deep.equal({
-                            username,
-                            firstName,
-                            lastName
-                        });
-                        expect(res.body[1]).to.deep.equal({
-                            username: usernameB,
-                            firstName: firstNameB,
-                            lastName: lastNameB
-                        });
                     });
             });
         });

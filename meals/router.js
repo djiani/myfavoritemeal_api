@@ -13,13 +13,13 @@ const jsonParser = bodyParser.json();
 /*************** Get all meal *******************
 /************************************************/
 router.get('/', (req, res) => {
-    return Meals.find()
-        .then(Meals => res.status(200).json(Meals.map(meal => meal.apiRepr())))
+   return Meals.find()
+        .then(meals => res.status(200).json(meals.map(meal => meal.apiRepr())))
         .catch(err => res.status(500).json({message: 'Internal server error'}));
 });
 
 router.get('/meal/:id', (req, res) => {
-    return Meals.findOne({_id: req.params.id})
+     Meals.findOne({_id: req.params.id})
         .then(meal => res.status(200).json({meal}))
         .catch(err => res.status(500).json({message: 'Internal server error'}));
 });
@@ -141,15 +141,15 @@ router.put('/:id', jsonParser, (req, res)=>{
         });
     }
 
-    if(req.params.id !== req.body._id){
-      const message = ( `Request path id (${req.params.id}) and request body id `
-      `(${req.body._id}) must match`);
+    if(req.params.id !== req.body.id){
+      const message =  `Request path id (${req.params.id}) and request body id (${req.body._id}) must match`;
       console.error(message);
       return res.status(400).send(message);
 
     }
     console.log('Update meal...');
     const mealUpdate = {
+          'id': req.body.id,
           'name': req.body.name,
           'description': req.body.description,
           'category': req.body.category,

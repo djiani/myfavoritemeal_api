@@ -14,6 +14,8 @@ const multerS3 = require('multer-s3');
 const {PORT, DATABASE_URL, CLIENT_ORIGIN, ACCESS_KEY_ID, 
     SECRET_ACCESS_KEY, S3_BUCKET, JWT_SECRET, JWT_EXPIRY} = require('./config');
 
+console.log('checdk JWT_EXPIRY:')
+console.log(JWT_EXPIRY);
 
 const {router: usersRouter} = require('./users');
 const {router: mealRouter} = require('./meals');
@@ -133,23 +135,23 @@ app.use('*', (req, res) => {
 // assumes runServer has run and set `server` to a server object
 let server;
 
-function runServer() {
-    return new Promise((resolve, reject) => {
-        mongoose.connect(DATABASE_URL, err => {
-            if (err) {
-                return reject(err);
-            }
-            server = app
-                .listen(PORT, () => {
-                    console.log(`Your app is listening on port ${PORT}`);
-                    resolve();
-                })
-                .on('error', err => {
-                    mongoose.disconnect();
-                    reject(err);
-                });
-        });
+function runServer(databaseUrl=DATABASE_URL, port=PORT) {
+
+  return new Promise((resolve, reject) => {
+    mongoose.connect(databaseUrl, err => {
+      if (err) {
+        return reject(err);
+      }
+      server = app.listen(port, () => {
+        console.log(`Your app is listening on port ${port}`);
+        resolve();
+      })
+      .on('error', err => {
+        mongoose.disconnect();
+        reject(err);
+      });
     });
+  });
 }
 
 function closeServer() {

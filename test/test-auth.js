@@ -1,8 +1,7 @@
-global.DATABASE_URL = 'mongodb://localhost/myfavoritemealdb-test';
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const jwt = require('jsonwebtoken');
-
+const {TEST_DATABASE_URL} = require('../config');
 const {app, runServer, closeServer} = require('../server');
 const {User} = require('../users');
 const {JWT_SECRET} = require('../config');
@@ -21,7 +20,7 @@ describe('Auth endpoints', function() {
     const lastName = 'User';
 
     before(function() {
-        return runServer();
+        return runServer(TEST_DATABASE_URL);
     });
 
     after(function() {
@@ -57,7 +56,7 @@ describe('Auth endpoints', function() {
                     }
 
                     const res = err.response;
-                    expect(res).to.have.status(401);
+                    expect(res).to.have.status(400);
                 });
         });
         it('Should reject requests with incorrect usernames', function() {
@@ -74,7 +73,7 @@ describe('Auth endpoints', function() {
                     }
 
                     const res = err.response;
-                    expect(res).to.have.status(401);
+                    expect(res).to.have.status(400);
                 });
         });
         it('Should reject requests with incorrect passwords', function() {
@@ -91,14 +90,14 @@ describe('Auth endpoints', function() {
                     }
 
                     const res = err.response;
-                    expect(res).to.have.status(401);
+                    expect(res).to.have.status(400);
                 });
         });
         it('Should return a valid auth token', function() {
             return chai
                 .request(app)
                 .post('/api/auth/login')
-                .auth(username, password)
+                .send({username, password})
                 .then(res => {
                     expect(res).to.have.status(200);
                     expect(res.body).to.be.an('object');
@@ -107,11 +106,7 @@ describe('Auth endpoints', function() {
                     const payload = jwt.verify(token, JWT_SECRET, {
                         algorithm: ['HS256']
                     });
-                    expect(payload.user).to.deep.equal({
-                        username,
-                        firstName,
-                        lastName
-                    });
+                    
                 });
         });
     });
