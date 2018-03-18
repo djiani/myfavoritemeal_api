@@ -138,8 +138,9 @@ router.put('/:id', jsonParser, (req, res)=>{
             location: missingField
         });
     }
-
-    if(req.params.id !== req.body.id){
+    console.log(req.params.id);
+    console.log(req.body);
+    if(req.params.id !== req.body._id){
       const message =  `Request path id (${req.params.id}) and request body id (${req.body._id}) must match`;
       console.error(message);
       return res.status(400).send(message);
@@ -147,14 +148,15 @@ router.put('/:id', jsonParser, (req, res)=>{
     }
     
     const mealUpdate = {
-          'id': req.body.id,
+          'id': req.body._id,
           'name': req.body.name,
           'description': req.body.description,
           'category': req.body.category,
+          'difficulty': req.body.difficulty,
           'hands_on': req.body.hands_on,
           'served': req.body.served, 
           'ingredients': req.body.ingredients,
-          'direction': req.body.direction,
+          'directions': req.body.directions,
           'owner': req.body.owner,
           'image_url': req.body.image_url
         }
