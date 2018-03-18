@@ -175,7 +175,8 @@ describe('myfavorite meal api', function(){
       return chai.request(app)
       .get('/api/meals')
       .then(res =>{
-        updateMeal.id = res.body[0].id;
+        console.log(res.body[0])
+        updateMeal._id = res.body[0].id;
         return chai.request(app)
         .put('/api/meals/'+ res.body[0].id)
         .send(updateMeal)
