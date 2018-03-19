@@ -8,4 +8,4 @@ exports.JWT_SECRET = process.env.JWT_SECRET || "samuel";
 exports.JWT_EXPIRY = process.env.JWT_EXPIRY || '7d';
 exports.ACCESS_KEY_ID = process.env.ACCESS_KEY_ID ;
 exports.SECRET_ACCESS_KEY = process.env.SECRET_ACCESS_KEY ;
-exports.S3_BUCKET = process.env.S3_BUCKET || "awsmyfavoritemeal"
+exports.S3_BUCKET = process.env.S3_BUCKET

@@ -60,11 +60,14 @@ app.get(
     }
 );
 
+
+
 aws.config.update(
     {accessKeyId: ACCESS_KEY_ID, 
     secretAccessKey: SECRET_ACCESS_KEY,
     region: "us-west-2"
 })
+
 const s3 = new aws.S3();
 // create the multer object, defining a filter for file extension and storage rules
 const upload = multer({
@@ -91,7 +94,9 @@ const upload = multer({
   })
 }).single('file');
 
-app.post('/api/test-upload', (request, response) => {
+
+app.post('/api/upload', (request, response) => {
+  
   upload(request, response, error => {
     if (error) {
       return response.status(400).send(error);
