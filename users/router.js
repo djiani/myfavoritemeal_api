@@ -144,4 +144,17 @@ router.get('/', (req, res) => {
         .catch(err => res.status(500).json({message: 'Internal server error'}));
 });
 
+router.delete('/:id', (req, res) => {
+  console.log('About to remove this user id: '+req.params.id+ 'from the database!!!!')
+  User.remove({"_id": req.params.id})
+  .then(status =>{
+    res.status(204).json({id: req.params.id});
+
+  })
+  .catch(err =>{
+    res.status(500).json({message:'Internal server error'});
+  })
+ 
+})
+
 module.exports = {router};
